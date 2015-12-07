@@ -62,15 +62,15 @@
             hammerit = this.$image.hammer().data('hammer'); // Get the hammer instance after it has been created.
           else
             hammerit = Hammer(this.$image.get(0));
-		  // Enable panning in all directions without any threshold.
-		  hammerit.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
-		  // Enable pinching.
-		  hammerit.get('pinch').set({ enable: true });
+      // Enable panning in all directions without any threshold.
+      hammerit.get('pan').set({ direction: Hammer.DIRECTION_ALL, threshold: 0 });
+      // Enable pinching.
+      hammerit.get('pinch').set({ enable: true });
           hammerit.on('panleft panright panup pandown', function(e) {
             if (!dragData)
               dragData = {
                 startX: self.img_left,
-                startY: self.img_top	// Some IE versions complained about the extra comma.
+                startY: self.img_top  // Some IE versions complained about the extra comma.
               };
             dragData.dx = e.deltaX;
             dragData.dy = e.deltaY;
@@ -148,9 +148,9 @@
           if (self.options.result)
             self.setCrop.call(self, self.options.result);
           else
-            self.zoom.call(self, this.minPercent );
+            self.zoom.call(self, self.minPercent);
           self.$image.fadeIn('fast');
-		  self.on_load.call(self);
+      self.on_load.call(self);
         };
         // onload has to be set before src for IE8
         // otherwise it never fires
@@ -160,7 +160,7 @@
       remove: function () {
         var hammerit;
         if (typeof $.fn.hammer === 'function')
-          hammerit = this.$image.data('hammer');	// Get hammer instance object.
+          hammerit = this.$image.data('hammer');  // Get hammer instance object.
         else if (typeof Hammer !== 'undefined')
           hammerit = Hammer(this.$image.get(0));
         if (hammerit)
@@ -242,12 +242,12 @@
           // this allows it to fail gracefully.
           return false;
         }
-        var finalWidth  = this.options.useOriginalResolution  ? this.$image.width  : this.options.width ;
-        var finalHeight = this.options.useOriginalResolution  ? this.$image.height : this.options.height ;
+        var finalWidth  = this.options.useOriginalResolution ? this.$image.width() : this.options.width;
+        var finalHeight = this.options.useOriginalResolution ? this.$image.height() :  this.options.height;
         var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
         canvas.width = finalWidth;
         canvas.height = finalHeight;
-        ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, finalWidth,finalHeight);
+        ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, finalWidth, finalHeight);
         return canvas.toDataURL();
       },
       getBlob: function () {
@@ -275,7 +275,8 @@
       maxZoom: 1,
       controls: null,
       showControls: 'auto',
-      label: 'Drag to crop'
+      label: 'Drag to crop',
+      useOriginalResolution:true
     };
   }
 
