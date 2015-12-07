@@ -275,8 +275,8 @@
       maxZoom: 1,
       controls: null,
       showControls: 'auto',
-      label: 'Drag to crop',
-      useOriginalResolution:true
+      label: 'Drag to crop'
+      
     };
   }
 
