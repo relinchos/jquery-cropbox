@@ -1,5 +1,4 @@
 (function() {
-  
   var supportsCanvas = document.createElement('canvas');
   supportsCanvas = !!(supportsCanvas.getContext && supportsCanvas.getContext('2d'));
 
@@ -30,9 +29,7 @@
 
   function factory($) {
     function Crop($image, options, on_load) {
-      this.naturalHeight = $image.height();
-      this.naturalWidth = $image.width();
-      this.width = null;      
+      this.width = null;
       this.height = null;
       this.img_width = null;
       this.img_height = null;
@@ -43,9 +40,9 @@
       this.$image = $image;
       this.$image.hide().prop('draggable', false).addClass('cropImage').wrap('<div class="cropFrame" />'); // wrap image in frame;
       this.$frame = this.$image.parent();
-  	  this.on_load = on_load || function() {};
-        this.init();
-      }
+    this.on_load = on_load || function() {};
+      this.init();
+    }
 
     Crop.prototype = {
       init: function () {
@@ -146,7 +143,7 @@
           self.height = img.height;
           img.src = '';
           img.onload = null;
-          self.percent = null;
+          self.percent = undefined;
           self.fit.call(self);
           if (self.options.result)
             self.setCrop.call(self, self.options.result);
@@ -183,8 +180,7 @@
       fit: function () {
         var widthRatio = this.options.width / this.width,
           heightRatio = this.options.height / this.height;
-          this.minPercent =(widthRatio >= heightRatio) ? widthRatio : heightRatio;
-
+        this.minPercent = (widthRatio >= heightRatio) ? widthRatio : heightRatio;
       },
 
       setCrop: function (result) {
@@ -199,7 +195,7 @@
 
       zoom: function(percent) {
         var old_percent = this.percent;
-        
+
         this.percent = Math.max(this.minPercent, Math.min(this.options.maxZoom, percent));
         this.img_width = Math.ceil(this.width * this.percent);
         this.img_height = Math.ceil(this.height * this.percent);
@@ -246,11 +242,11 @@
           // this allows it to fail gracefully.
           return false;
         }
-        var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
-        canvas.width = this.naturalWidth;
-        canvas.height = this.naturalHeight;
         var finalWidth  = this.options.useOriginalResolution  ? this.$image.width  : this.options.width ;
         var finalHeight = this.options.useOriginalResolution  ? this.$image.height : this.options.height ;
+        var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
         ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, finalWidth,finalHeight);
         return canvas.toDataURL();
       },
