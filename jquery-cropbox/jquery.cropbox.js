@@ -242,8 +242,8 @@
           // this allows it to fail gracefully.
           return false;
         }
-        var finalWidth  = this.options.useOriginalResolution ? this.$image.width() : this.options.width;
-        var finalHeight = this.options.useOriginalResolution ? this.$image.height() :  this.options.height;
+        var finalWidth  = this.options.useOriginalResolution ? this.result.cropW : this.options.width;
+        var finalHeight = this.options.useOriginalResolution ? this.result.cropH :  this.options.height;
         var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
         canvas.width = finalWidth;
         canvas.height = finalHeight;
