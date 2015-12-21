@@ -28,6 +28,71 @@
   var pluginName = 'cropbox';
 
   function factory($) {
+    /**
+     * jQuery throttle / debounce - v1.1 - 3/7/2010
+     * http://benalman.com/projects/jquery-throttle-debounce-plugin/
+     *
+     * Copyright (c) 2010 "Cowboy" Ben Alman
+     * Dual licensed under the MIT and GPL licenses.
+     * http://benalman.com/about/license/
+    */
+
+    var jq_throttle;
+
+    $.throttle = jq_throttle = function( delay, no_trailing, callback, debounce_mode ) {
+      var timeout_id, last_exec = 0;
+
+      if ( typeof no_trailing !== 'boolean' ) {
+        debounce_mode = callback;
+        callback = no_trailing;
+        no_trailing = undefined;
+      }
+    
+      function wrapper() {
+        
+        var that = this,
+          elapsed = +new Date() - last_exec,
+          args = arguments;
+        
+        function exec() {
+          last_exec = +new Date();
+          callback.apply( that, args );
+        };
+
+        function clear() {
+          timeout_id = undefined;
+        };
+
+        if ( debounce_mode && !timeout_id ) {
+          exec();
+        }
+        
+        timeout_id && clearTimeout( timeout_id );
+        
+        if ( debounce_mode === undefined && elapsed > delay ) {
+     
+          exec();
+          
+        } else if ( no_trailing !== true ) {
+      
+          timeout_id = setTimeout( debounce_mode ? clear : exec, debounce_mode === undefined ? delay - elapsed : delay );
+        }
+      };
+      
+      if ( $.guid ) {
+        wrapper.guid = callback.guid = callback.guid || $.guid++;
+      }
+
+      return wrapper;
+    };
+   
+    $.debounce = function( delay, at_begin, callback ) {
+      return callback === undefined
+        ? jq_throttle( delay, at_begin, false )
+        : jq_throttle( delay, callback, at_begin !== false );
+    };
+
+
     function Crop($image, options, on_load) {
       this.width = null;
       this.height = null;
@@ -43,17 +108,28 @@
     this.on_load = on_load || function() {};
       this.init();
     }
-
+    
     Crop.prototype = {
+      lazyUpdate : $.debounce(1500,true,this.update),
+      lazyCrop : $.debounce(1500,true,this.crop),
+      lazyZoom :$.debounce(1500,true,this.zoom),
+      lazyZoomIn :$.debounce(1500,true,this.zoomIn),
+      lazyZoomOut: $.debounce(1500,true,this.zoomOut),
+      lazyDrag : $.debounce(1500,true,this.drag),
       init: function () {
-        var self = this;
 
-        var defaultControls = $('<div/>', { 'class' : 'cropControls' })
+        var self = this;
+        if(this.options.defaultControls){
+          var defaultControls = $('<div/>', { 'class' : 'cropControls' })
               .append($('<span>'+this.options.label+'</span>'))
               .append($('<button/>', { 'class' : 'cropZoomIn', 'type':'button' }).on('click', $.proxy(this.zoomIn, this)))
-              .append($('<button/>', { 'class' : 'cropZoomOut', 'type':'button' }).on('click', $.proxy(this.zoomOut, this)));
-
-        this.$frame.append(this.options.controls || defaultControls);
+              .append($('<button/>', { 'class' : 'cropZoomOut', 'type':'button' }).on('click', $.proxy(this.zoomOut, this)));  
+            this.$frame.append(defaultControls);  
+        }else{
+          if(this.options.controls)
+            this.$frame.append(this.options.controls);
+        }
+        
         this.updateOptions();
 
         if (typeof $.fn.hammer === 'function' || typeof Hammer !== 'undefined') {
@@ -75,20 +151,20 @@
             dragData.dx = e.deltaX;
             dragData.dy = e.deltaY;
             e.preventDefault();
-            self.drag.call(self, dragData, true);
+            self.lazyDrag.call(self, dragData, true);
           }).on('panend pancancel', function(e) {
             e.preventDefault();
             dragData = null;
-            self.update.call(self);
+            self.lazyUpdate.call(self);
           }).on('doubletap', function(e) {
             e.preventDefault();
-            self.zoomIn.call(self);
+            self.lazyZoomIn.call(self);
           }).on('pinchin', function (e) {
             e.preventDefault();
-            self.zoomOut.call(self);
+            self.lazyZoomOut.call(self);
           }).on('pinchout', function (e) {
             e.preventDefault();
-            self.zoomIn.call(self);
+            self.lazyZoomIn.call(self);
           });
         } else {
           // prevent IE8's default drag functionality
@@ -102,9 +178,9 @@
             $(document).on('mousemove.' + pluginName, function (e2) {
               dragData.dx = e2.pageX - e1.pageX;
               dragData.dy = e2.pageY - e1.pageY;
-              self.drag.call(self, dragData, true);
+              self.lazyDrag.call(self, dragData, true);
             }).on('mouseup.' + pluginName, function() {
-              self.update.call(self);
+              self.lazyUpdate.call(self);
               $(document).off('mouseup.' + pluginName);
               $(document).off('mousemove.' + pluginName);
             });
@@ -114,9 +190,9 @@
           this.$image.on('mousewheel.' + pluginName, function (e) {
             e.preventDefault();
             if (e.deltaY < 0)
-              self.zoomIn.call(self);
+              self.lazyZoomIn.call(self);
             else
-              self.zoomOut.call(self);
+              self.lazyZoomOut.call(self);
           });
         }
       },
@@ -245,9 +321,9 @@
         var finalWidth  = this.options.useOriginalResolution ? this.result.cropW : this.options.width;
         var finalHeight = this.options.useOriginalResolution ? this.result.cropH :  this.options.height;
         var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
-        canvas.width = finalWidth;
-        canvas.height = finalHeight;
-        ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, finalWidth, finalHeight);
+        canvas.width = finalWidth > 1500 ? 1500 : finalWidth;
+        canvas.height = finalHeight > 1500 ? 1500 : finalHeight;
+        ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, canvas.width, canvas.height);
         return canvas.toDataURL();
       },
       getBlob: function () {
@@ -274,10 +350,12 @@
       zoom: 10,
       maxZoom: 1,
       controls: null,
-      showControls: 'auto',
+      defaultControls:false,
+      showControls: 'never',
       label: 'Drag to crop'
       
     };
+    
   }
 
   if (typeof require === "function" && typeof exports === "object" && typeof module === "object")
@@ -288,3 +366,7 @@
       factory(window.jQuery || window.Zepto);
 
 })();
+
+
+  
+  
