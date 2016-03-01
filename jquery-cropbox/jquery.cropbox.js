@@ -317,8 +317,8 @@
           // this allows it to fail gracefully.
           return false;
         }
-        var finalWidth  = this.options.useOriginalResolution ? this.result.cropW : this.options.width;
-        var finalHeight = this.options.useOriginalResolution ? this.result.cropH :  this.options.height;
+        var finalWidth  = this.options.useOriginalResolution ? this.result.cropW : this.options.outputHeight || 1000;
+        var finalHeight = this.options.useOriginalResolution ? this.result.cropH :  this.options.outputHeight || 1000;
         var canvas = document.createElement('canvas'), ctx = canvas.getContext('2d');
         canvas.width = finalWidth > 1500 ? 1500 : finalWidth;
         canvas.height = finalHeight > 1500 ? 1500 : finalHeight;
