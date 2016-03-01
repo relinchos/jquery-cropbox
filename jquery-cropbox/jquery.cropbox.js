@@ -326,7 +326,7 @@
         return canvas.toDataURL();
       },
       getBlob: function () {
-        return uri2blob(this.getDataURL());
+        return uri2blob(this.getDataURL("image/jpeg",1.0));
       }
     };
 
