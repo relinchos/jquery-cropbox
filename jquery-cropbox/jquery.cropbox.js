@@ -323,10 +323,10 @@
         canvas.width = finalWidth > 1500 ? 1500 : finalWidth;
         canvas.height = finalHeight > 1500 ? 1500 : finalHeight;
         ctx.drawImage(this.$image.get(0), this.result.cropX, this.result.cropY, this.result.cropW, this.result.cropH, 0, 0, canvas.width, canvas.height);
-        return canvas.toDataURL();
+        return canvas.toDataURL("image/jpeg", 1.0);
       },
       getBlob: function () {
-        return uri2blob(this.getDataURL("image/jpeg",1.0));
+        return uri2blob(this.getDataURL());
       }
     };
 
