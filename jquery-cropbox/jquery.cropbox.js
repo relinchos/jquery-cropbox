@@ -115,7 +115,6 @@
       lazyZoom :$.debounce(1500,true,this.zoom),
       lazyZoomIn :$.debounce(1500,true,this.zoomIn),
       lazyZoomOut: $.debounce(1500,true,this.zoomOut),
-      lazyDrag : $.debounce(1500,true,this.drag),
       init: function () {
 
         var self = this;
@@ -151,7 +150,7 @@
             dragData.dx = e.deltaX;
             dragData.dy = e.deltaY;
             e.preventDefault();
-            self.lazyDrag.call(self, dragData, true);
+            self.drag.call(self, dragData, true);
           }).on('panend pancancel', function(e) {
             e.preventDefault();
             dragData = null;
@@ -178,7 +177,7 @@
             $(document).on('mousemove.' + pluginName, function (e2) {
               dragData.dx = e2.pageX - e1.pageX;
               dragData.dy = e2.pageY - e1.pageY;
-              self.lazyDrag.call(self, dragData, true);
+              self.drag.call(self, dragData, true);
             }).on('mouseup.' + pluginName, function() {
               self.lazyUpdate.call(self);
               $(document).off('mouseup.' + pluginName);
