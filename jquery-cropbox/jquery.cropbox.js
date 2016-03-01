@@ -56,7 +56,7 @@
         
         function exec() {
           last_exec = +new Date();
-          callback.apply( that, args );
+          callback && callback.apply ? callback.apply( that, args ) : null;
         };
 
         function clear() {
