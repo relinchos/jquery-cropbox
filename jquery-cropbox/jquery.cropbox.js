@@ -302,7 +302,7 @@
         this.$image.css({ left: this.img_left, top: this.img_top });
         if(this.options.debug)
           console.log('--','drag','data:',data,'--')
-        $.debounce(1000,false,this.update)
+        $.debounce(1000,true,this.update)
       },
       update: function() {
         this.result = {
