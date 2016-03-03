@@ -271,6 +271,9 @@
       zoom: function(percent) {
         var old_percent = this.percent;
 
+        if(this.options.debug)
+          console.log('--','zoom','old_percent:',old_percent,'percent:',percent,'--')
+
         this.percent = Math.max(this.minPercent, Math.min(this.options.maxZoom, percent));
         this.img_width = Math.ceil(this.width * this.percent);
         this.img_height = Math.ceil(this.height * this.percent);
