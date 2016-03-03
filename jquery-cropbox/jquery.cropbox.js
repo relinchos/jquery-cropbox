@@ -314,6 +314,9 @@
           stretch: this.minPercent > 1
         };
 
+        if(this.options.debug)
+          console.log('--','update','result:',this.result,'--')
+
         this.$image.trigger(pluginName, [this.result, this]);
       },
       getDataURL: function () {
