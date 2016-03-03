@@ -93,6 +93,8 @@
         : jq_throttle( delay, callback, at_begin !== false );
     };
 
+    var debounced;
+
 
     function Crop($image, options, on_load) {
       this.width = null;
@@ -303,7 +305,8 @@
         this.$image.css({ left: this.img_left, top: this.img_top });
         if(this.options.debug)
           console.log('--','drag','data:',data,'--')
-        $.debounce(1000,true,this.update)
+        clearTimeout(debounced);
+        debounced = setTimeout(this.update,1000);
       },
       update: function() {
         this.result = {
