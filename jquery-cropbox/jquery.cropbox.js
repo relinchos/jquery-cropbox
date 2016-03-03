@@ -301,7 +301,7 @@
         this.img_top = fill(data.startY + data.dy, this.img_height, this.options.height);
         this.$image.css({ left: this.img_left, top: this.img_top });
         if(this.options.debug)
-          console.log('--','drag','data:',data,'skipupdate:',skipupdate,'--')
+          console.log('--','drag','data:',data,'--')
         $.debounce(1000,false,this.update)
       },
       update: function() {
