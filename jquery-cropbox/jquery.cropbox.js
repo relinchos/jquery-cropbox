@@ -150,7 +150,7 @@
             dragData.dx = e.deltaX;
             dragData.dy = e.deltaY;
             e.preventDefault();
-            self.drag.call(self, dragData, true);
+            self.drag.call(self, dragData);
           }).on('panend pancancel', function(e) {
             e.preventDefault();
             dragData = null;
@@ -177,7 +177,7 @@
             $(document).on('mousemove.' + pluginName, function (e2) {
               dragData.dx = e2.pageX - e1.pageX;
               dragData.dy = e2.pageY - e1.pageY;
-              self.drag.call(self, dragData, true);
+              self.drag.call(self, dragData);
             }).on('mouseup.' + pluginName, function() {
               self.lazyUpdate.call(self);
               $(document).off('mouseup.' + pluginName);
@@ -302,8 +302,7 @@
         this.$image.css({ left: this.img_left, top: this.img_top });
         if(this.options.debug)
           console.log('--','drag','data:',data,'skipupdate:',skipupdate,'--')
-        if (!skipupdate)
-          this.update();
+        this.lazyUpdate.call(this);
       },
       update: function() {
         this.result = {
