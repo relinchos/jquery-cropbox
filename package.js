@@ -1,7 +1,7 @@
 Package.describe({
   name: "relinchos:jquery-cropbox",
   summary: "jquery-crobox",
-  version: "0.3.11",
+  version: "0.3.12",
   git: 'https://github.com/relinchos/jquery-cropbox',
   documentation: 'README.md'
 });
