@@ -303,10 +303,13 @@
         this.img_left = fill(data.startX + data.dx, this.img_width, this.options.width);
         this.img_top = fill(data.startY + data.dy, this.img_height, this.options.height);
         this.$image.css({ left: this.img_left, top: this.img_top });
+        var self = this;
         if(this.options.debug)
           console.log('--','drag','data:',data,'--')
         clearTimeout(debounced);
-        debounced = setTimeout(this.update,1000);
+        debounced = setTimeout(function(){
+          self.update.call(self);
+        },1000);
       },
       update: function() {
         this.result = {
