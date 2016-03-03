@@ -296,13 +296,13 @@
       zoomOut: function() {
         this.zoom(this.percent - (1 - this.minPercent) / (this.options.zoom - 1 || 1));
       },
-      drag: function(data, skipupdate) {
+      drag: function(data) {
         this.img_left = fill(data.startX + data.dx, this.img_width, this.options.width);
         this.img_top = fill(data.startY + data.dy, this.img_height, this.options.height);
         this.$image.css({ left: this.img_left, top: this.img_top });
         if(this.options.debug)
           console.log('--','drag','data:',data,'skipupdate:',skipupdate,'--')
-        this.lazyUpdate.call(this);
+        $.debounce(1000,false,this.update)
       },
       update: function() {
         this.result = {
